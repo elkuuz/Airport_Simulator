@@ -107,9 +107,12 @@ public class MyEngine extends Engine {
             /* more realistic simulation case with variable customer arrival times and service times */
             servicePoints[0] = new ServicePoint(new Normal(10, 6), eventList, EventType.CHECK_IN);
             servicePoints[1] = new ServicePoint(new Normal(10, 6), eventList, EventType.LUGGAGE_DROP);
-            servicePoints[2] = new ServicePoint(new Normal(10, 6), eventList, EventType.SECURITY);
-            servicePoints[3] = new ServicePoint(new Normal(10, 6), eventList, EventType.PASSPORT_CONTROL);
-            servicePoints[4] = new ServicePoint(new Normal(10, 6), eventList, EventType.GATE);
+            servicePoints[2] = new ServicePoint(new Normal(10, 6), eventList, EventType.LUGGAGE_DROP_PRIORITY);
+            servicePoints[3] = new ServicePoint(new Normal(10, 6), eventList, EventType.SECURITY);
+            servicePoints[4] = new ServicePoint(new Normal(10, 6), eventList, EventType.SECURITY_PRIORITY);
+            servicePoints[5] = new ServicePoint(new Normal(10, 6), eventList, EventType.PASSPORT_CONTROL);
+            servicePoints[6] = new ServicePoint(new Normal(10, 6), eventList, EventType.PASSPORT_CONTROL_PRIORITY);
+            servicePoints[7] = new ServicePoint(new Normal(10, 6), eventList, EventType.GATE);
 
             arrivalProcess = new ArrivalProcess(new Negexp(15, 5), eventList, EventType.ARR1);
             /*
@@ -132,60 +135,85 @@ public class MyEngine extends Engine {
         Passenger a;
 
         switch ((EventType) t.getType()) {
-            case ARR1:
+            case ARR1 -> {
                 Passenger p = new Passenger();
-                if (p.isCheckIn()){
-                    servicePoints[0].addQueue(p);
-                }
-                else if (p.getIsPriority()) {
+                if (p.isCheckIn()) {
+                    servicePoints[0].addQueue(p);  //lisää checkin jonoon
+                    arrivalProcess.generateNextEvent();
+                } else if (p.getIsPriority()) {
                     if (p.isLuggage()) {
-                        servicePoints[2].addQueue(p);
+                        servicePoints[2].addQueue(p);  //lisää priority luggage jonoon
+                        arrivalProcess.generateNextEvent();
+                    } else {
+                        servicePoints[4].addQueue(p);  //lisää priority security jonoon
+                        arrivalProcess.generateNextEvent();
+                    }
+                } else {
+                    if (p.isLuggage()) {
+                        servicePoints[1].addQueue(p);   //normi luggagee
+                        arrivalProcess.generateNextEvent();
+                    } else {
+                        servicePoints[3].addQueue(p);  //normi security
+                        arrivalProcess.generateNextEvent();
                     }
                 }
-                servicePoints[0].addQueue(new Passenger());
-                arrivalProcess.generateNextEvent();
-                break;
+            }
+            case CHECK_IN -> {
+                Passenger p = servicePoints[0].removeQueue();
+                if (p.getIsPriority()) {
+                    if (p.isLuggage()) {
+                        servicePoints[2].addQueue(p);  //lisää priority luggage jonoon
+                    } else {
+                        servicePoints[4].addQueue(p);  //lisää priority security jonoon
+                    }
+                } else {
+                    if (p.isLuggage()) {
+                        servicePoints[1].addQueue(p);   //normi luggagee
+                    } else {
+                        servicePoints[3].addQueue(p);  //normi security
+                    }
+                }
+            }
+            case LUGGAGE_DROP -> {
+                simu.model.Passenger p = servicePoints[1].removeQueue();
+                servicePoints[3].addQueue(p);  //normi security
+            }
 
-            case CHECK_IN:
-                a = servicePoints[0].removeQueue();
-                servicePoints[1].addQueue(a);
-                break;
 
-            case LUGGAGE_DROP:
-                a = servicePoints[1].removeQueue();
-                servicePoints[2].addQueue(a);
-                break;
+            case LUGGAGE_DROP_PRIORITY -> {
+                simu.model.Passenger p = servicePoints[2].removeQueue();
+                servicePoints[4].addQueue(p);  //lisää priority security jonoon
+            }
 
-            case LUGGAGE_DROP_PRIORITY:
-                a = servicePoints[2].removeQueue();
-                servicePoints[3].addQueue(a);
-                break;
+            case SECURITY -> {
+                simu.model.Passenger p = servicePoints[3].removeQueue();
+                servicePoints[4].addQueue(p);  //lisää priority security jonoon
+            }
 
-            case SECURITY:
-                a = servicePoints[3].removeQueue();
-                servicePoints[4].addQueue(a);
-                break;
+            case SECURITY_PRIORITY -> {
+                simu.model.Passenger p = servicePoints[4].removeQueue();
+                if (p.isEuCitizen()) {
+                    servicePoints[7].addQueue(p);  //gatelle
+                } else {
+                    servicePoints[6].addQueue(p);  //passport security
+                }
+            }
 
-            case SECURITY_PRIORITY:
-                a = servicePoints[4].removeQueue();
-                servicePoints[5].addQueue(a);
-                break;
+            case PASSPORT_CONTROL -> {
+                simu.model.Passenger p = servicePoints[5].removeQueue();
+                servicePoints[7].addQueue(p);  //gatelle
+            }
 
-            case PASSPORT_CONTROL:
-                a = servicePoints[5].removeQueue();
-                servicePoints[6].addQueue(a);
-                break;
+            case PASSPORT_CONTROL_PRIORITY -> {
+                simu.model.Passenger p = servicePoints[6].removeQueue();
+                servicePoints[7].addQueue(p);  //gatelle
+            }
 
-            case PASSPORT_CONTROL_PRIORITY:
-                a = servicePoints[6].removeQueue();
-                servicePoints[7].addQueue(a);
-                break;
-
-            case GATE:
-                a = servicePoints[8].removeQueue();
-                a.setRemovalTime(Clock.getInstance().getClock());
-                a.reportResults();
-                break;
+            case GATE -> {
+                simu.model.Passenger p = servicePoints[7].removeQueue();
+                p.setRemovalTime(Clock.getInstance().getClock());
+                p.reportResults();
+            }
         }
     }
 
