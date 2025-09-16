@@ -107,12 +107,12 @@ public class MyEngine extends Engine {
             /* more realistic simulation case with variable customer arrival times and service times */
             servicePoints[0] = new ServicePoint(new Normal(10, 6), eventList, EventType.CHECK_IN);
             servicePoints[1] = new ServicePoint(new Normal(10, 6), eventList, EventType.LUGGAGE_DROP);
-            servicePoints[2] = new ServicePoint(new Normal(10, 6), eventList, EventType.LUGGAGE_DROP_PRIORITY);
-            servicePoints[2] = new ServicePoint(new Normal(10, 6), eventList, EventType.SECURITY);
-            servicePoints[4] = new ServicePoint(new Normal(10, 6), eventList, EventType.SECURITY_PRIORITY);
-            servicePoints[3] = new ServicePoint(new Normal(10, 6), eventList, EventType.PASSPORT_CONTROL);
-            servicePoints[6] = new ServicePoint(new Normal(10, 6), eventList, EventType.PASSPORT_CONTROL_PRIORITY);
-            servicePoints[4] = new ServicePoint(new Normal(10, 6), eventList, EventType.GATE);
+            servicePoints[3] = new ServicePoint(new Normal(10, 6), eventList, EventType.LUGGAGE_DROP_PRIORITY);
+            servicePoints[4] = new ServicePoint(new Normal(10, 6), eventList, EventType.SECURITY);
+            servicePoints[5] = new ServicePoint(new Normal(10, 6), eventList, EventType.SECURITY_PRIORITY);
+            servicePoints[6] = new ServicePoint(new Normal(10, 6), eventList, EventType.PASSPORT_CONTROL);
+            servicePoints[7] = new ServicePoint(new Normal(10, 6), eventList, EventType.PASSPORT_CONTROL_PRIORITY);
+            servicePoints[8] = new ServicePoint(new Normal(10, 6), eventList, EventType.GATE);
 
             arrivalProcess = new ArrivalProcess(new Negexp(15, 5), eventList, EventType.ARR1);
             /*
