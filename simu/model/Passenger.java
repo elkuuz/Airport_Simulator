@@ -13,7 +13,10 @@ public class Passenger {
 	private int id;
 	private static int i = 1;
 	private static long sum = 0;
-    private boolean isPriority=false;
+    private boolean isPriority;
+    private boolean checkIn;
+    private boolean luggage;
+    private boolean euCitizen;
 
 
 	/**
@@ -21,7 +24,10 @@ public class Passenger {
 	 */
 	public Passenger() {
 	    id = i++;
-	    
+	    this.isPriority = false;
+        this.checkIn = true;
+        this.luggage = true;
+        this.euCitizen = true;
 		arrivalTime = Clock.getInstance().getClock();
 		Trace.out(Trace.Level.INFO, "New  #" + id + " arrived at  " + arrivalTime);
 	}
@@ -38,7 +44,19 @@ public class Passenger {
         return isPriority;
     }
 
-	/**
+    public boolean isCheckIn() {
+        return checkIn;
+    }
+
+    public boolean isLuggage() {
+        return luggage;
+    }
+
+    public boolean isEuCitizen() {
+        return euCitizen;
+    }
+
+    /**
 	 * Mark the time when the  has been removed (from the system to be simulated)
 	 * @param removalTime  removal time
 	 */
