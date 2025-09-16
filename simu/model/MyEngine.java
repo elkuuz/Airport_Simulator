@@ -95,9 +95,12 @@ public class MyEngine extends Engine {
 
             servicePoints[0] = new ServicePoint(serviceTime, eventList, EventType.CHECK_IN);
             servicePoints[1] = new ServicePoint(serviceTime, eventList, EventType.LUGGAGE_DROP);
-            servicePoints[2] = new ServicePoint(serviceTime, eventList, EventType.SECURITY);
-            servicePoints[3] = new ServicePoint(serviceTime, eventList, EventType.PASSPORT_CONTROL);
-            servicePoints[4] = new ServicePoint(serviceTime, eventList, EventType.GATE);
+            servicePoints[2] = new ServicePoint(serviceTime, eventList, EventType.LUGGAGE_DROP_PRIORITY);
+            servicePoints[3] = new ServicePoint(serviceTime, eventList, EventType.SECURITY);
+            servicePoints[4] = new ServicePoint(serviceTime, eventList, EventType.SECURITY_PRIORITY);
+            servicePoints[5] = new ServicePoint(serviceTime, eventList, EventType.PASSPORT_CONTROL);
+            servicePoints[6] = new ServicePoint(serviceTime, eventList, EventType.PASSPORT_CONTROL_PRIORITY);
+            servicePoints[7] = new ServicePoint(serviceTime, eventList, EventType.GATE);
 
             arrivalProcess = new ArrivalProcess(arrivalTime, eventList, EventType.ARR1);
         } else {
@@ -130,6 +133,15 @@ public class MyEngine extends Engine {
 
         switch ((EventType) t.getType()) {
             case ARR1:
+                Passenger p = new Passenger();
+                if (p.isCheckIn()){
+                    servicePoints[0].addQueue(p);
+                }
+                else if (p.getIsPriority()) {
+                    if (p.isLuggage()) {
+                        servicePoints[2].addQueue(p);
+                    }
+                }
                 servicePoints[0].addQueue(new Passenger());
                 arrivalProcess.generateNextEvent();
                 break;
@@ -144,18 +156,33 @@ public class MyEngine extends Engine {
                 servicePoints[2].addQueue(a);
                 break;
 
-            case SECURITY:
+            case LUGGAGE_DROP_PRIORITY:
                 a = servicePoints[2].removeQueue();
                 servicePoints[3].addQueue(a);
                 break;
 
-            case PASSPORT_CONTROL:
+            case SECURITY:
                 a = servicePoints[3].removeQueue();
                 servicePoints[4].addQueue(a);
                 break;
 
-            case GATE:
+            case SECURITY_PRIORITY:
                 a = servicePoints[4].removeQueue();
+                servicePoints[5].addQueue(a);
+                break;
+
+            case PASSPORT_CONTROL:
+                a = servicePoints[5].removeQueue();
+                servicePoints[6].addQueue(a);
+                break;
+
+            case PASSPORT_CONTROL_PRIORITY:
+                a = servicePoints[6].removeQueue();
+                servicePoints[7].addQueue(a);
+                break;
+
+            case GATE:
+                a = servicePoints[8].removeQueue();
                 a.setRemovalTime(Clock.getInstance().getClock());
                 a.reportResults();
                 break;
