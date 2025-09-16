@@ -18,6 +18,7 @@ public enum EventType implements IEventType {
     PASSPORT_CONTROL,
     GATE,
     LUGGAGE_DROP,
+    LUGGAGE_DROP_PRIORITY,
 
     SECURITY_Q_PRIORITY,
     PASSPORT_CONTROL_Q_PRIORITY,
