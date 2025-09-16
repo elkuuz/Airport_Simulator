@@ -19,7 +19,7 @@ import java.util.LinkedList;
  * Service point collects measurement parameters.
  */
 public class ServicePoint {
-	private LinkedList<Customer> queue = new LinkedList<>(); // Data Structure used
+	private LinkedList<Passenger> queue = new LinkedList<>(); // Data Structure used
 	private ContinuousGenerator generator;
 	private EventList eventList;
 	private EventType eventTypeScheduled;
@@ -45,7 +45,7 @@ public class ServicePoint {
 	 *
 	 * @param a Customer to be queued
 	 */
-	public void addQueue(Customer a) {	// The first customer of the queue is always in service
+	public void addQueue(Passenger a) {	// The first customer of the queue is always in service
 		queue.add(a);
 	}
 
@@ -55,7 +55,7 @@ public class ServicePoint {
 	 *
 	 * @return Customer retrieved from the waiting queue
 	 */
-	public Customer removeQueue() {		// Remove serviced customer
+	public Passenger removeQueue() {		// Remove serviced customer
 		reserved = false;
 		return queue.poll();
 	}
