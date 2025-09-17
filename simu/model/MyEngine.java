@@ -93,26 +93,26 @@ public class MyEngine extends Engine {
                 // normal distribution used to model service times
                 serviceTime = new Normal(10, 6, Integer.toUnsignedLong(r.nextInt()));
 
-            servicePoints[0] = new ServicePoint(serviceTime, eventList, EventType.CHECK_IN);
-            servicePoints[1] = new ServicePoint(serviceTime, eventList, EventType.LUGGAGE_DROP);
-            servicePoints[2] = new ServicePoint(serviceTime, eventList, EventType.LUGGAGE_DROP_PRIORITY);
-            servicePoints[3] = new ServicePoint(serviceTime, eventList, EventType.SECURITY);
-            servicePoints[4] = new ServicePoint(serviceTime, eventList, EventType.SECURITY_PRIORITY);
-            servicePoints[5] = new ServicePoint(serviceTime, eventList, EventType.PASSPORT_CONTROL);
-            servicePoints[6] = new ServicePoint(serviceTime, eventList, EventType.PASSPORT_CONTROL_PRIORITY);
-            servicePoints[7] = new ServicePoint(serviceTime, eventList, EventType.GATE);
+            servicePoints[0] = new ServicePoint(serviceTime, eventList, EventType.CHECK_IN,2);
+            servicePoints[1] = new ServicePoint(serviceTime, eventList, EventType.LUGGAGE_DROP,4);
+            servicePoints[2] = new ServicePoint(serviceTime, eventList, EventType.LUGGAGE_DROP_PRIORITY,5);
+            servicePoints[3] = new ServicePoint(serviceTime, eventList, EventType.SECURITY,6);
+            servicePoints[4] = new ServicePoint(serviceTime, eventList, EventType.SECURITY_PRIORITY,7);
+            servicePoints[5] = new ServicePoint(serviceTime, eventList, EventType.PASSPORT_CONTROL,1);
+            servicePoints[6] = new ServicePoint(serviceTime, eventList, EventType.PASSPORT_CONTROL_PRIORITY,67);
+            servicePoints[7] = new ServicePoint(serviceTime, eventList, EventType.GATE,4);
 
             arrivalProcess = new ArrivalProcess(arrivalTime, eventList, EventType.ARR1);
         } else {
             /* more realistic simulation case with variable customer arrival times and service times */
-            servicePoints[0] = new ServicePoint(new Normal(10, 6), eventList, EventType.CHECK_IN);
-            servicePoints[1] = new ServicePoint(new Normal(10, 6), eventList, EventType.LUGGAGE_DROP);
-            servicePoints[2] = new ServicePoint(new Normal(10, 6), eventList, EventType.LUGGAGE_DROP_PRIORITY);
-            servicePoints[3] = new ServicePoint(new Normal(10, 6), eventList, EventType.SECURITY);
-            servicePoints[4] = new ServicePoint(new Normal(10, 6), eventList, EventType.SECURITY_PRIORITY);
-            servicePoints[5] = new ServicePoint(new Normal(10, 6), eventList, EventType.PASSPORT_CONTROL);
-            servicePoints[6] = new ServicePoint(new Normal(10, 6), eventList, EventType.PASSPORT_CONTROL_PRIORITY);
-            servicePoints[7] = new ServicePoint(new Normal(10, 6), eventList, EventType.GATE);
+            servicePoints[0] = new ServicePoint(new Normal(10, 6), eventList, EventType.CHECK_IN,3);
+            servicePoints[1] = new ServicePoint(new Normal(10, 6), eventList, EventType.LUGGAGE_DROP,6);
+            servicePoints[2] = new ServicePoint(new Normal(10, 6), eventList, EventType.LUGGAGE_DROP_PRIORITY,5);
+            servicePoints[3] = new ServicePoint(new Normal(10, 6), eventList, EventType.SECURITY,4);
+            servicePoints[4] = new ServicePoint(new Normal(10, 6), eventList, EventType.SECURITY_PRIORITY,2);
+            servicePoints[5] = new ServicePoint(new Normal(10, 6), eventList, EventType.PASSPORT_CONTROL,3);
+            servicePoints[6] = new ServicePoint(new Normal(10, 6), eventList, EventType.PASSPORT_CONTROL_PRIORITY,66);
+            servicePoints[7] = new ServicePoint(new Normal(10, 6), eventList, EventType.GATE,5);
 
             arrivalProcess = new ArrivalProcess(new Negexp(15, 5), eventList, EventType.ARR1);
             /*
@@ -220,10 +220,11 @@ public class MyEngine extends Engine {
     @Override
     protected void tryCEvents() {
         for (ServicePoint p : servicePoints) {
-            if (!p.isReserved() && p.isOnQueue()) {
-                p.beginService();
-            }
-        }
+            for (int i=0; i<p.getLineCount(); i++){
+                if (!p.isReserved(i) && p.isOnQueue()) {
+                    p.beginService(i);
+                }
+            }}
     }
 
     @Override
