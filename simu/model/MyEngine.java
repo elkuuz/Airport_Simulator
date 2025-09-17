@@ -4,7 +4,9 @@ import eduni.distributions.ContinuousGenerator;
 import eduni.distributions.Normal;
 import simu.framework.*;
 import eduni.distributions.Negexp;
-
+import eduni.distributions.LogNormal;
+import eduni.distributions.Gamma;
+import eduni.distributions.TruncatedNormal;
 import java.util.Random;
 
 /**
@@ -20,7 +22,7 @@ public class MyEngine extends Engine {
     private ArrivalProcess arrivalProcess;
     private ServicePoint[] servicePoints;
     private final int SERVICE_POINT_COUNT;
-    public static final boolean TEXTDEMO = true;
+    public static final boolean TEXTDEMO = false; // set false to get more realistic simulation case
     public static final boolean FIXEDARRIVALTIMES = false;
     public static final boolean FXIEDSERVICETIMES = false;
 
@@ -105,14 +107,14 @@ public class MyEngine extends Engine {
             arrivalProcess = new ArrivalProcess(arrivalTime, eventList, EventType.ARR1);
         } else {
             /* more realistic simulation case with variable customer arrival times and service times */
-            servicePoints[0] = new ServicePoint(new Normal(10, 6), eventList, EventType.CHECK_IN,3);
-            servicePoints[1] = new ServicePoint(new Normal(10, 6), eventList, EventType.LUGGAGE_DROP,6);
-            servicePoints[2] = new ServicePoint(new Normal(10, 6), eventList, EventType.LUGGAGE_DROP_PRIORITY,5);
-            servicePoints[3] = new ServicePoint(new Normal(10, 6), eventList, EventType.SECURITY,4);
-            servicePoints[4] = new ServicePoint(new Normal(10, 6), eventList, EventType.SECURITY_PRIORITY,2);
-            servicePoints[5] = new ServicePoint(new Normal(10, 6), eventList, EventType.PASSPORT_CONTROL,3);
-            servicePoints[6] = new ServicePoint(new Normal(10, 6), eventList, EventType.PASSPORT_CONTROL_PRIORITY,66);
-            servicePoints[7] = new ServicePoint(new Normal(10, 6), eventList, EventType.GATE,5);
+            servicePoints[0] = new ServicePoint(new LogNormal(2.3, 0.5), eventList, EventType.CHECK_IN,3);
+            servicePoints[1] = new ServicePoint(new Gamma(2.0, 5.0), eventList, EventType.LUGGAGE_DROP,6);
+            servicePoints[2] = new ServicePoint(new Gamma(2.0, 5.0), eventList, EventType.LUGGAGE_DROP_PRIORITY,5);
+            servicePoints[3] = new ServicePoint(new TruncatedNormal(12, 6), eventList, EventType.SECURITY,4);
+            servicePoints[4] = new ServicePoint(new Normal(8, 4), eventList, EventType.SECURITY_PRIORITY,2);
+            servicePoints[5] = new ServicePoint(new LogNormal(2.1, 0.7), eventList, EventType.PASSPORT_CONTROL,3);
+            servicePoints[6] = new ServicePoint(new LogNormal(2.1, 0.7), eventList, EventType.PASSPORT_CONTROL_PRIORITY,66);
+            servicePoints[7] = new ServicePoint(new Normal(5, 1), eventList, EventType.GATE,5);
 
             arrivalProcess = new ArrivalProcess(new Negexp(15, 5), eventList, EventType.ARR1);
             /*
