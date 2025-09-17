@@ -2,6 +2,9 @@ package simu.model;
 
 import eduni.distributions.ContinuousGenerator;
 import simu.framework.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -26,9 +29,16 @@ public class ServicePoint {
     private EventList eventList;
     private EventType eventTypeScheduled;
     private boolean[] reserved ;
+    private int maxLenght;
+    private int minLength;
+    private double averageLength;
+    //private boolean reserved = false;
 
     /* Random number generator for choosing a queue, CAN BE CHANGED */
     private Random rand = new Random();
+    private ArrayList<Integer> queueLengths = new ArrayList<>();
+	//Queuestrategy strategy; // option: ordering of the customer
+
 
 
     /**
@@ -120,6 +130,29 @@ public class ServicePoint {
     public boolean isQueueEmpty(int lineIndex) {
         return queues[lineIndex].isEmpty();
     }
+
+    //Pitäsköhä servicepointit kaikki olla jossai listassa? katotaan miten sakke o sen tehny
+    public void addLenghtToQueueLengths() {
+        queueLengths.add(queue.toArray().length);
+    }
+
+    public void findMinMaxLengths() {
+        int shortest = Integer.MAX_VALUE;
+        int longest = Integer.MIN_VALUE;
+        int sum = 0;
+        for (Integer length : queueLengths) {
+            sum += length;
+            if (length < shortest) {
+                shortest = length;
+            } if (length > longest) {
+                longest =  length;
+            }
+        }
+        this.maxLenght = longest;
+        this.minLength = shortest;
+        this.averageLength = (double) sum / queueLengths.size();
+    }
+}
 
     /**
      * Get the number of lines (queues) in the service point
