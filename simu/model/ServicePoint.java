@@ -2,6 +2,9 @@ package simu.model;
 
 import eduni.distributions.ContinuousGenerator;
 import simu.framework.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 
 /**
@@ -19,6 +22,10 @@ import java.util.LinkedList;
  * Service point collects measurement parameters.
  */
 public class ServicePoint {
+    private ArrayList<Integer> queueLengths = new ArrayList<>();
+    private int maxLenght;
+    private int minLength;
+    private double averageLength;
 	private LinkedList<Passenger> queue = new LinkedList<>(); // Data Structure used
 	private ContinuousGenerator generator;
 	private EventList eventList;
@@ -90,4 +97,26 @@ public class ServicePoint {
 	public boolean isOnQueue(){
 		return queue.size() != 0;
 	}
+
+    //Pitäsköhä servicepointit kaikki olla jossai listassa? katotaan miten sakke o sen tehny
+    public void addLenghtToQueueLengths() {
+        queueLengths.add(queue.toArray().length);
+    }
+
+    public void findMinMaxLengths() {
+        int shortest = Integer.MAX_VALUE;
+        int longest = Integer.MIN_VALUE;
+        int sum = 0;
+        for (Integer length : queueLengths) {
+            sum += length;
+            if (length < shortest) {
+                shortest = length;
+            } if (length > longest) {
+                longest =  length;
+            }
+        }
+        this.maxLenght = longest;
+        this.minLength = shortest;
+        this.averageLength = (double) sum / queueLengths.size();
+    }
 }
