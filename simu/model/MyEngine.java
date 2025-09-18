@@ -231,6 +231,16 @@ public class MyEngine extends Engine {
 
     @Override
     protected void results() {
+        for (ServicePoint serv : servicePoints) {
+            serv.findMinMaxLengths();
+        }
+        int index = 1;
+        for (ServicePoint serv : servicePoints) {
+            System.out.println("Queue nro." + index + " max lengths are: " + serv.getMaxLenght());
+            System.out.println("Queue nro." + index + " Min lengths are: " + serv.getMinLength());
+            System.out.println("Queue nro." + index + " average lengths are: " + serv.getAverageLength());
+            index++;
+        }
         System.out.println("Simulation ended at " + Clock.getInstance().getClock());
         System.out.println("Results ... are currently missing");
     }

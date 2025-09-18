@@ -2,6 +2,9 @@ package simu.model;
 
 import eduni.distributions.ContinuousGenerator;
 import simu.framework.*;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Random;
 
@@ -26,9 +29,16 @@ public class ServicePoint {
     private EventList eventList;
     private EventType eventTypeScheduled;
     private boolean[] reserved ;
+    private int maxLenght;
+    private int minLength;
+    private double averageLength;
+    //private boolean reserved = false;
 
     /* Random number generator for choosing a queue, CAN BE CHANGED */
     private Random rand = new Random();
+    private ArrayList<Integer> queueLengths = new ArrayList<>();
+	//Queuestrategy strategy; // option: ordering of the customer
+
 
 
     /**
@@ -48,6 +58,7 @@ public class ServicePoint {
         reserved = new boolean[lineCount];
         for (int i=0; i<lineCount;i++){
             queues[i] = new LinkedList<>();
+            this.queueLengths.add(queues[i].toArray().length);    //lisää sen hetkisen jonon listaa
             reserved[i] = false;
         }
     }
@@ -58,8 +69,10 @@ public class ServicePoint {
      * @param a Customer to be queued
      */
     public void addQueue(Passenger a) {	// The first customer of the queue is always in service, also added to random line
+        //mitä tää random tekee? arpooks se random jonon mihi lisää passengerin?
         int choose=rand.nextInt(queues.length);
         queues[choose].add(a);
+        this.queueLengths.add(queues[choose].toArray().length);   //lisää sen hetkisen jonon listaa
     }
 
     /**
@@ -121,12 +134,54 @@ public class ServicePoint {
         return queues[lineIndex].isEmpty();
     }
 
-    /**
-     * Get the number of lines (queues) in the service point
-     *
-     * @return number of lines
-     */
+    //Pitäsköhä servicepointit kaikki olla jossai listassa? katotaan miten sakke o sen tehny
+    // to-do: selvitä miten sakke luo ja hallinnoi listoi
+    /*
+    public void addLenghtToQueueLengths() {
+        queueLengths.add(queue.toArray().length);
+    }
+*/
+    private void addQueueLength(int length) {
+        this.queueLengths.add(length);
+    }
+
+    public void findMinMaxLengths() {
+        int shortest = Integer.MAX_VALUE;
+        int longest = Integer.MIN_VALUE;
+        int sum = 0;
+        for (Integer length : queueLengths) {
+            sum += length;
+            if (length < shortest) {
+                shortest = length;
+            } if (length > longest) {
+                longest =  length;
+            }
+        }
+        this.maxLenght = longest;
+        this.minLength = shortest;
+        this.averageLength = (double) sum / queueLengths.size();
+    }
+
+    public int getMaxLenght() {
+        return maxLenght;
+    }
+
     public int getLineCount() {
         return queues.length;
     }
+
+    public int getMinLength() {
+        return minLength;
+    }
+
+    public double getAverageLength() {
+        return averageLength;
+    }
+
 }
+/**
+ * Get the number of lines (queues) in the service point
+ *
+ * @return number of lines
+ */
+
