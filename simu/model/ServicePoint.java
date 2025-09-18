@@ -37,6 +37,9 @@ public class ServicePoint {
     /* Random number generator for choosing a queue, CAN BE CHANGED */
     private Random rand = new Random();
     private ArrayList<Integer> queueLengths = new ArrayList<>();
+
+	private LinkedList<Passenger> queue = new LinkedList<>(); // Data Structure used
+
 	//Queuestrategy strategy; // option: ordering of the customer
 
 
@@ -132,6 +135,15 @@ public class ServicePoint {
     }
 
     //Pitäsköhä servicepointit kaikki olla jossai listassa? katotaan miten sakke o sen tehny
+
+	/**
+	 * Check whether there is customers on the waiting queue
+	 *
+	 * @return logival value indicating queue status
+	 */
+
+
+    //Pitäsköhä servicepointit kaikki olla jossai listassa? katotaan miten sakke o sen tehny
     public void addLenghtToQueueLengths() {
         queueLengths.add(queue.toArray().length);
     }
@@ -152,14 +164,15 @@ public class ServicePoint {
         this.minLength = shortest;
         this.averageLength = (double) sum / queueLengths.size();
     }
-}
 
-    /**
-     * Get the number of lines (queues) in the service point
-     *
-     * @return number of lines
-     */
     public int getLineCount() {
         return queues.length;
     }
 }
+
+/**
+ * Get the number of lines (queues) in the service point
+ *
+ * @return number of lines
+ */
+
