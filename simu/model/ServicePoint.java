@@ -37,9 +37,6 @@ public class ServicePoint {
     /* Random number generator for choosing a queue, CAN BE CHANGED */
     private Random rand = new Random();
     private ArrayList<Integer> queueLengths = new ArrayList<>();
-
-	private LinkedList<Passenger> queue = new LinkedList<>(); // Data Structure used
-
 	//Queuestrategy strategy; // option: ordering of the customer
 
 
@@ -61,6 +58,7 @@ public class ServicePoint {
         reserved = new boolean[lineCount];
         for (int i=0; i<lineCount;i++){
             queues[i] = new LinkedList<>();
+            this.queueLengths.add(queues[i].toArray().length);    //lisää sen hetkisen jonon listaa
             reserved[i] = false;
         }
     }
@@ -71,8 +69,10 @@ public class ServicePoint {
      * @param a Customer to be queued
      */
     public void addQueue(Passenger a) {	// The first customer of the queue is always in service, also added to random line
+        //mitä tää random tekee? arpooks se random jonon mihi lisää passengerin?
         int choose=rand.nextInt(queues.length);
         queues[choose].add(a);
+        this.queueLengths.add(queues[choose].toArray().length);   //lisää sen hetkisen jonon listaa
     }
 
     /**
@@ -135,17 +135,14 @@ public class ServicePoint {
     }
 
     //Pitäsköhä servicepointit kaikki olla jossai listassa? katotaan miten sakke o sen tehny
-
-	/**
-	 * Check whether there is customers on the waiting queue
-	 *
-	 * @return logival value indicating queue status
-	 */
-
-
-    //Pitäsköhä servicepointit kaikki olla jossai listassa? katotaan miten sakke o sen tehny
+    // to-do: selvitä miten sakke luo ja hallinnoi listoi
+    /*
     public void addLenghtToQueueLengths() {
         queueLengths.add(queue.toArray().length);
+    }
+*/
+    private void addQueueLength(int length) {
+        this.queueLengths.add(length);
     }
 
     public void findMinMaxLengths() {
@@ -165,11 +162,23 @@ public class ServicePoint {
         this.averageLength = (double) sum / queueLengths.size();
     }
 
+    public int getMaxLenght() {
+        return maxLenght;
+    }
+
     public int getLineCount() {
         return queues.length;
     }
-}
 
+    public int getMinLength() {
+        return minLength;
+    }
+
+    public double getAverageLength() {
+        return averageLength;
+    }
+
+}
 /**
  * Get the number of lines (queues) in the service point
  *
